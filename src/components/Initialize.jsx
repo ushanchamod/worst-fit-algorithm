@@ -1,4 +1,4 @@
-import {Scheduler} from "../utility/scheduler.js";
+import {Scheduler} from "../class/scheduler.js";
 import {useState} from "react";
 
 
