@@ -11,15 +11,15 @@ function App() {
     return (
         <div id="main-container">
             {
-                !scheduler && <Initialize setScheduler={setScheduler} />
+                !scheduler && <Initialize setScheduler={setScheduler}/>
             }
 
             {
                 scheduler && (
                     <div id="scheduler-section">
-                        <TopSection scheduler={scheduler} setScheduler={setScheduler} />
+                        <TopSection scheduler={scheduler} setScheduler={setScheduler}/>
 
-                        <LiveStatus scheduler={scheduler} />
+                        <LiveStatus scheduler={scheduler}/>
 
                     </div>
                 )

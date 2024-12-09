@@ -1,85 +1,32 @@
 import {Memory} from "./memory.js";
 
+const PROCESS_STATUSES = {
+    WAITING: 'waiting',
+    RUNNING: 'running',
+    COMPLETED: 'completed',
+    REJECTED: 'rejected',
+};
+
 export class Scheduler {
     constructor(memory) {
+        this.memory = new Memory(memory);
         this.queue = [];
         this.completed = [];
         this.rejected = [];
-        this.memory = new Memory(memory);
+
         this.maxMemorySize = memory.reduce((acc, size) => acc + size, 0);
-    }
-
-    addProcessToQueue(process) {
-        const pid = `P${new Date().getTime()}`;
-        const newProcess = {...process, pid, status: 'waiting'};
-        this.queue.push(newProcess);
-        this.run()
-
-
-    }
-
-    deallocateMemory(processId) {
-        const newMemory = this.memory.getMemory().map((block) => {
-            if (block.pid === processId) {
-                return {
-                    size: block.size,
-                    isFree: true,
-                    pid: null,
-                };
-            }
-            return block;
-        });
-
-        for (let i = 0; i < newMemory.length - 1; i++) {
-            if (newMemory[i].isFree && newMemory[i + 1].isFree) {
-                newMemory[i].size += newMemory[i + 1].size;
-                newMemory.splice(i + 1, 1);
-                i--; // Recheck for newly merged blocks
-            }
-        }
-
-        this.memory.setMemory(newMemory);
-        this.run();
-
-    }
-
-    allocateMemory(process, index) {
-
-        this.removeProcessFromQueue(process.pid);
-
-        const updatedMemory = [...this.memory.getMemory()];
-        const block = updatedMemory[index];
-
-        if (block.size > process.size) {
-
-            updatedMemory.splice(index, 1,
-
-                {size: process.size, isFree: false, pid: process.pid},
-                {size: block.size - process.size, isFree: true, pid: null}
-            );
-
-            this.memory.setMemory(updatedMemory)
-
-        } else {
-            block.isFree = false;
-            block.pid = process.pid;
-        }
-        process.status = 'running';
-
-        setTimeout(() => {
-            this.deallocateMemory(process.pid);
-            this.completed.push(process);
-        }, process.duration);
-
-        return true;
-    }
-
-    getQueue() {
-        return this.queue;
     }
 
     getMemory() {
         return this.memory.getMemory();
+    }
+
+    getTotalMemory() {
+        return this.maxMemorySize;
+    }
+
+    getQueue() {
+        return this.queue;
     }
 
     getCompleted() {
@@ -90,10 +37,33 @@ export class Scheduler {
         return this.rejected;
     }
 
-    getTotalMemory(){
-        return this.maxMemorySize;
+    addProcessToQueue(process) {
+        const pid = `P${Math.floor(Math.random() * 1000)}`;
+        const newProcess = {...process, pid, status: PROCESS_STATUSES.WAITING};
+        this.queue.push(newProcess);
+        this.run();
     }
 
+    allocateMemory(process, index) {
+        this.removeProcessFromQueue(process.pid);
+        this.memory.allocateMemory(process, index);
+        process.status = PROCESS_STATUSES.RUNNING;
+
+        if(process.duration === -1) return;
+
+        setTimeout(() => {
+            this.deallocateMemory(process.pid);
+            process.status = PROCESS_STATUSES.COMPLETED;
+            console.log(`Process ${process.pid} completed.`);
+            this.completed.push(process);
+        }, process.duration);
+
+    }
+
+    deallocateMemory(pid) {
+        this.memory.deallocateMemory(pid);
+        this.run();
+    }
 
     removeProcessFromQueue(pid) {
         this.queue = this.queue.filter((process) => process.pid !== pid);
@@ -101,18 +71,27 @@ export class Scheduler {
 
     run() {
         this.queue.forEach((process) => {
-            if (process.status === 'running') return;
-            if (process.size > this.maxMemorySize) {
-                process.status = 'rejected';
-                this.rejected.push(process);
+            if (process.status !== PROCESS_STATUSES.WAITING) return;
 
+            if (process.size > this.maxMemorySize) {
+                process.status = PROCESS_STATUSES.REJECTED;
+                this.rejected.push(process);
                 this.removeProcessFromQueue(process.pid);
                 return;
             }
+
             const index = this.memory.findWorstFitBlock(process.size);
             if (index !== -1) {
                 this.allocateMemory(process, index);
             }
         });
+    }
+
+    logSchedulerState() {
+        console.log('Queue:', this.queue);
+        console.log('Completed:', this.completed);
+        console.log('Rejected:', this.rejected);
+        console.log('Memory State:');
+        this.memory.logMemoryState();
     }
 }
