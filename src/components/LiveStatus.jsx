@@ -1,11 +1,13 @@
 import {useEffect, useState} from "react";
-import {loadDataSet} from "../data/helper-data.js";
+import DataSelectionPopup from "./DataSelectionPopup.jsx";
 
 
-function LiveStatus({scheduler}) {
+function LiveStatus({scheduler, resetMemory}) {
     const totalMemory = scheduler.getTotalMemory();
     const [data, setData] = useState([]);
     const [memory, setMemory] = useState(null);
+    const [loadDataSet, setLoadDataSet] = useState(null);
+    const [open, setOpen] = useState(false);
 
     useEffect(() => {
 
@@ -24,7 +26,7 @@ function LiveStatus({scheduler}) {
             })
 
             setMemory(memory);
-        }, );
+        },);
 
         return () => {
             clearInterval(interval);
@@ -53,12 +55,18 @@ function LiveStatus({scheduler}) {
     //     };
     // }, []);
 
-    const loadData = () => {
-        loadDataSet(scheduler, 'dataSet1');
+    const start = () => {
+        resetMemory()
+        scheduler.addProcessToQueue(loadDataSet);
+    }
+
+    const openDataSelection = () => {
+        setOpen(true);
     }
 
     return (
         <div id="live-status">
+            {open && <DataSelectionPopup setLoadDataSet={setLoadDataSet} setOpen={setOpen} resetMemory={resetMemory}/>}
             <div className="memory" id="memory-001">
                 {
                     memory && memory?.map((block, index) => {
@@ -71,9 +79,11 @@ function LiveStatus({scheduler}) {
                         return (
                             <div key={index} className="single-block"
                                  style={{width: `${blockWidth}px`, background: isFree ? 'green' : 'black'}}>
-
                                 {
-                                    isFree ? <p>{size} kb</p> : <p>{pid}</p>
+                                    isFree ? <p title={`${size}KB`}>{size} kb</p> : <div>
+                                        <p title={pid}>{pid}</p>
+                                        <p title={`${size}KB`}>{size} kb</p>
+                                    </div>
 
                                 }
                             </div>
@@ -222,7 +232,16 @@ function LiveStatus({scheduler}) {
                 </div>
             </div>
 
-            <button onClick={loadData}>load data</button>
+            <br/>
+            <hr/>
+
+            <h4>Load data to memory</h4>
+
+            <div className="btns">
+                <button onClick={openDataSelection} className="cloose">Choose Data Set</button>
+                {loadDataSet && loadDataSet.length > 0 &&
+                    <button onClick={start} className="save">Load to Queue & Start</button>}
+            </div>
 
         </div>
     );

@@ -1,52 +1,33 @@
 export const dataSet1 = [
-    {
-        size: 100,
-        duration: 200
-    },
-    {
-        size: 200,
-        duration: 300
-    },
-    {
-        size: 300,
-        duration: 400
-    },
-    {
-        size: 400,
-        duration: 500
-    },
-    {
-        size: 500,
-        duration: 600
-    },
-    {
-        size: 600,
-        duration: 700
-    },
-    {
-        size: 700,
-        duration: 800
-    },
-    {
-        size: 800,
-        duration: 900
-    },
-    {
-        size: 900,
-        duration: 1000
-    },
-    {
-        size: 1000,
-        duration: 1100
-    }
+    ...Array.from({length: 20}, () => ({
+        size: Math.floor(Math.random() * 1500) + 1,
+        duration: Math.floor(Math.random() * 200) + 100
+    }))
 ]
 
-export const loadDataSet = (scheduler, setName) => {
-    if(!scheduler) return;
+export const dataSet2 = [
+    ...Array.from({length: 10}, () => ({
+        size: Math.floor(Math.random() * 100) + 1,
+        duration: Math.floor(Math.random() * 5000) + 200
+    }))
+]
 
-    if(setName === 'dataSet1') {
-        for(const p of dataSet1) {
-            scheduler.addProcessToQueue(p);
-        }
+export const getDataSet = (setName) => {
+    if (setName === 'dataSet1') {
+        return dataSet1;
+    }
+    else if (setName === 'dataSet2') {
+        return dataSet2;
+    }
+}
+
+export const loadDataSet = (scheduler, setName) => {
+    if (!scheduler) return;
+
+    if (setName === 'dataSet1') {
+        scheduler.addProcessToQueue(dataSet1);
+    }
+    else if (setName === 'dataSet2') {
+        scheduler.addProcessToQueue(dataSet2);
     }
 };

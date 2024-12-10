@@ -38,9 +38,23 @@ export class Scheduler {
     }
 
     addProcessToQueue(process) {
-        const pid = `P${Math.floor(Math.random() * 1000)}`;
-        const newProcess = {...process, pid, status: PROCESS_STATUSES.WAITING};
-        this.queue.push(newProcess);
+        if (process.constructor === Array) {
+            const newProcesses = process.map((p) => {
+                const pid = `P${Math.floor(Math.random() * 1000)}`;
+                return {...p, pid, status: PROCESS_STATUSES.WAITING};
+            });
+
+            const queue = [...this.queue, ...newProcesses];
+
+            this.queue = queue.sort((a, b) => b.size - a.size);
+        } else {
+            const pid = `P${Math.floor(Math.random() * 1000)}`;
+            const newProcess = {...process, pid, status: PROCESS_STATUSES.WAITING};
+            const newQueue = [...this.queue, newProcess];
+            console.log(newQueue)
+            this.queue = newQueue.sort((a, b) => b.size - a.size)
+        }
+
         this.run();
     }
 
@@ -49,7 +63,7 @@ export class Scheduler {
         this.memory.allocateMemory(process, index);
         process.status = PROCESS_STATUSES.RUNNING;
 
-        if(process.duration === -1) return;
+        if (process.duration === -1) return;
 
         setTimeout(() => {
             this.deallocateMemory(process.pid);
@@ -66,7 +80,8 @@ export class Scheduler {
     }
 
     removeProcessFromQueue(pid) {
-        this.queue = this.queue.filter((process) => process.pid !== pid);
+        const newQueue = this.queue.filter((process) => process.pid !== pid);
+        this.queue = newQueue.sort((a, b) => b.size - a.size);
     }
 
     run() {
@@ -85,6 +100,13 @@ export class Scheduler {
                 this.allocateMemory(process, index);
             }
         });
+    }
+
+    resetMemory() {
+        this.memory = new Memory(this.memory.getMemory().map((block) => block.size));
+        this.queue = [];
+        this.completed = [];
+        this.rejected = [];
     }
 
     logSchedulerState() {

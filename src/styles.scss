@@ -155,7 +155,7 @@
               padding: 6px 7px;
               font-size: 15px;
 
-              &.no-data{
+              &.no-data {
                 text-align: center;
               }
             }
@@ -174,5 +174,118 @@
       }
 
     }
+
+    h4 {
+      text-align: center;
+      font-size: 16px;
+      font-family: 'Roboto', sans-serif;
+      margin-top: 30px;
+    }
+
+    .btns {
+      display: flex;
+      gap: 10px;
+      padding: 10px;
+      justify-content: center;
+
+      button {
+        padding: 8px;
+        border: none;
+        background-color: #5e4cff;
+        color: #f0f0f0;
+        cursor: pointer;
+
+        &.save {
+          background-color: #fd2a2a;
+        }
+      }
+    }
+  }
+}
+
+#data-selection-popup {
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background: rgba(0, 0, 0, 0.5);
+  z-index: 10;
+
+  .card0 {
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    background: #fff;
+    padding: 20px 30px;
+    border-radius: 7px;
+    display: flex;
+    flex-direction: column;
+    gap: 15px;
+    max-width: 400px;
+    font-family: 'Roboto', sans-serif;
+    box-sizing: border-box;
+    width: 100%;
+
+    select {
+      box-sizing: border-box;
+      padding: 7px;
+      border: 1px solid #5e4cff;
+      outline: none;
+    }
+
+    .table-div {
+      max-height: 200px;
+      overflow: auto;
+
+      table {
+        border-collapse: collapse;
+        width: 100%;
+        font-family: 'Roboto', sans-serif;
+
+
+        tr {
+          td, th {
+            border: 1px solid #6c6c6c;
+            padding: 6px 7px;
+            font-size: 15px;
+            text-align: center;
+          }
+
+          th {
+            background: #e2c3ff;
+            font-weight: 700;
+            text-align: center;
+            position: sticky;
+            top: 0;
+            width: 100%;
+            white-space: nowrap;
+          }
+        }
+      }
+    }
+
+    .btns {
+      display: flex;
+      gap: 10px;
+
+      button {
+        width: 100%;
+        padding: 8px;
+        border: none;
+        background-color: #5e4cff;
+        color: #f0f0f0;
+        cursor: pointer;
+
+
+        &.close {
+          background-color: #fd2a2a;
+          margin-right: 10px;
+        }
+      }
+    }
+
+
   }
 }

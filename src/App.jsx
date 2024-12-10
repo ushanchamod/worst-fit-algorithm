@@ -7,6 +7,9 @@ import LiveStatus from "./components/LiveStatus.jsx";
 function App() {
     const [scheduler, setScheduler] = useState(null);
 
+    const resetMemory = () => {
+        scheduler.resetMemory();
+    }
 
     return (
         <div id="main-container">
@@ -19,7 +22,7 @@ function App() {
                     <div id="scheduler-section">
                         <TopSection scheduler={scheduler} setScheduler={setScheduler}/>
 
-                        <LiveStatus scheduler={scheduler}/>
+                        <LiveStatus scheduler={scheduler} resetMemory={resetMemory}/>
 
                     </div>
                 )
