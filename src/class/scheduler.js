@@ -8,17 +8,22 @@ const PROCESS_STATUSES = {
 };
 
 export class Scheduler {
+    #memory;
+    #queue;
+    #completed;
+    #rejected;
+
     constructor(memory) {
-        this.memory = new Memory(memory);
-        this.queue = [];
-        this.completed = [];
-        this.rejected = [];
+        this.#memory = new Memory(memory);
+        this.#queue = [];
+        this.#completed = [];
+        this.#rejected = [];
 
         this.maxMemorySize = memory.reduce((acc, size) => acc + size, 0);
     }
 
     getMemory() {
-        return this.memory.getMemory();
+        return this.#memory.getMemory();
     }
 
     getTotalMemory() {
@@ -26,15 +31,15 @@ export class Scheduler {
     }
 
     getQueue() {
-        return this.queue;
+        return this.#queue;
     }
 
     getCompleted() {
-        return this.completed;
+        return this.#completed;
     }
 
     getRejected() {
-        return this.rejected;
+        return this.#rejected;
     }
 
     addProcessToQueue(process) {
@@ -44,15 +49,15 @@ export class Scheduler {
                 return {...p, pid, status: PROCESS_STATUSES.WAITING};
             });
 
-            const queue = [...this.queue, ...newProcesses];
+            const queue = [...this.#queue, ...newProcesses];
 
-            this.queue = queue.sort((a, b) => b.size - a.size);
+            this.#queue = queue.sort((a, b) => b.size - a.size);
         } else {
             const pid = `P${Math.floor(Math.random() * 1000)}`;
             const newProcess = {...process, pid, status: PROCESS_STATUSES.WAITING};
-            const newQueue = [...this.queue, newProcess];
+            const newQueue = [...this.#queue, newProcess];
             console.log(newQueue)
-            this.queue = newQueue.sort((a, b) => b.size - a.size)
+            this.#queue = newQueue.sort((a, b) => b.size - a.size)
         }
 
         this.run();
@@ -60,7 +65,7 @@ export class Scheduler {
 
     allocateMemory(process, index) {
         this.removeProcessFromQueue(process.pid);
-        this.memory.allocateMemory(process, index);
+        this.#memory.allocateMemory(process, index);
         process.status = PROCESS_STATUSES.RUNNING;
 
         if (process.duration === -1) return;
@@ -69,33 +74,33 @@ export class Scheduler {
             this.deallocateMemory(process.pid);
             process.status = PROCESS_STATUSES.COMPLETED;
             console.log(`Process ${process.pid} completed.`);
-            this.completed.push(process);
+            this.#completed.push(process);
         }, process.duration);
 
     }
 
     deallocateMemory(pid) {
-        this.memory.deallocateMemory(pid);
+        this.#memory.deallocateMemory(pid);
         this.run();
     }
 
     removeProcessFromQueue(pid) {
-        const newQueue = this.queue.filter((process) => process.pid !== pid);
-        this.queue = newQueue.sort((a, b) => b.size - a.size);
+        const newQueue = this.#queue.filter((process) => process.pid !== pid);
+        this.#queue = newQueue.sort((a, b) => b.size - a.size);
     }
 
     run() {
-        this.queue.forEach((process) => {
+        this.#queue.forEach((process) => {
             if (process.status !== PROCESS_STATUSES.WAITING) return;
 
             if (process.size > this.maxMemorySize) {
                 process.status = PROCESS_STATUSES.REJECTED;
-                this.rejected.push(process);
+                this.#rejected.push(process);
                 this.removeProcessFromQueue(process.pid);
                 return;
             }
 
-            const index = this.memory.findWorstFitBlock(process.size);
+            const index = this.#memory.findWorstFitBlock(process.size);
             if (index !== -1) {
                 this.allocateMemory(process, index);
             }
@@ -103,17 +108,24 @@ export class Scheduler {
     }
 
     resetMemory() {
-        this.memory = new Memory(this.memory.getMemory().map((block) => block.size));
-        this.queue = [];
-        this.completed = [];
-        this.rejected = [];
+        this.#memory = new Memory(this.#memory.getMemory().map((block) => block.size));
+        this.#queue = [];
+        this.#completed = [];
+        this.#rejected = [];
     }
 
     logSchedulerState() {
-        console.log('Queue:', this.queue);
-        console.log('Completed:', this.completed);
-        console.log('Rejected:', this.rejected);
+        console.log('Queue:', this.#queue);
+        console.log('Completed:', this.#completed);
+        console.log('Rejected:', this.#rejected);
         console.log('Memory State:');
-        this.memory.logMemoryState();
+        this.#memory.logMemoryState();
     }
 }
+
+
+
+
+
+
+
