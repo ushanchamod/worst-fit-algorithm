@@ -108,7 +108,7 @@ export class Scheduler {
     }
 
     resetMemory() {
-        this.#memory = new Memory(this.#memory.getMemory().map((block) => block.size));
+        this.#memory = new Memory([this.maxMemorySize]);
         this.#queue = [];
         this.#completed = [];
         this.#rejected = [];

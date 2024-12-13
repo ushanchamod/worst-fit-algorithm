@@ -1,5 +1,5 @@
 import {useState} from "react";
-import {getDataSet} from "../data/helper-data.js";
+import {getDataSet, testingSet3, testingSet4} from "../data/helper-data.js";
 
 function DataSelectionPopup({setLoadDataSet, setOpen, resetMemory}) {
     const [selectedDataSet, setSelectedDataSet] = useState("");
@@ -30,6 +30,10 @@ function DataSelectionPopup({setLoadDataSet, setOpen, resetMemory}) {
                     <option value="" disabled>Select Data Set</option>
                     <option value="dataSet1">Data Set 1 - 20 processors</option>
                     <option value="dataSet2">Data Set 2 - 10 processors & Long process time</option>
+                    <option value="testingSet1">Testing Set 1 (Smaller than 1024 KB.)</option>
+                    <option value="testingSet2">Testing Set 2 (Larger than 1024 KB.)</option>
+                    <option value="testingSet3">Testing Set 3 (Larger and smaller processors mix (1024 KB).)</option>
+                    <option value="testingSet4">Testing Set 3 (Sum of processors are smaller than 1024 KB and not time out)</option>
                 </select>
 
 

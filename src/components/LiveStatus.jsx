@@ -55,8 +55,8 @@ function LiveStatus({scheduler, resetMemory}) {
     //     };
     // }, []);
 
-    const start = () => {
-        resetMemory()
+    const start = async () => {
+        await resetMemory()
         scheduler.addProcessToQueue(loadDataSet);
     }
 
@@ -168,7 +168,6 @@ function LiveStatus({scheduler, resetMemory}) {
                         <tr>
                             <th>PID</th>
                             <th>Size (kb)</th>
-                            <th>Duration (ms)</th>
                         </tr>
                         </thead>
 
@@ -179,7 +178,6 @@ function LiveStatus({scheduler, resetMemory}) {
                                     <tr key={index}>
                                         <td>{process.pid}</td>
                                         <td>{process.size}</td>
-                                        <td>{process.duration}</td>
                                     </tr>
                                 )
                             })
