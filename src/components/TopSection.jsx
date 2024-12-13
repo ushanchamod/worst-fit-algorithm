@@ -7,7 +7,7 @@ function TopSection({ scheduler, setScheduler }) {
             <div className="right">
                 <p>Total Memory Size : {totalMemorySize} kb</p>
 
-                <button onClick={() => setScheduler(null)}>Re-scheduler</button>
+                <button onClick={() => setScheduler(null)}>Re-schedule</button>
             </div>
         </div>
     );
