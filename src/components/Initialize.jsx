@@ -19,7 +19,7 @@ function Initialize({setScheduler}) {
             <div className='card'>
                 <h1>Initialize Memory</h1>
                 <div className="form">
-                    <input type="text" onChange={changeInput}/>
+                    <input type="number" onChange={changeInput} placeholder="Enter totle memory size"/>
                     <button onClick={initializeMemory}>Initialize Memory</button>
                 </div>
             </div>
