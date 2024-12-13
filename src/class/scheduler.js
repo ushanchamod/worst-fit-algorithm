@@ -85,7 +85,6 @@ export class Scheduler {
             const pid = `P${Math.floor(Math.random() * 1000)}`;
             const newProcess = {...process, pid, status: PROCESS_STATUSES.WAITING};
             const newQueue = [...this.#queue, newProcess];
-            console.log(newQueue)
             this.#queue = newQueue.sort((a, b) => b.size - a.size)
         }
         this.run();

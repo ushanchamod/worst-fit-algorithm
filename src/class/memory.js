@@ -1,5 +1,5 @@
 export class Memory {
-    #memory; // Private property to store the memory blocks and their state
+    #memory;
 
     /**
      * Constructor initializes the memory blocks with given sizes.
@@ -8,7 +8,10 @@ export class Memory {
      * @param {number[]} memory - Array of positive integers representing memory block sizes.
      */
     constructor(memory) {
-        if (!Array.isArray(memory) || memory.some((block) => block <= 0)) {
+        if (
+            !Array.isArray(memory)
+            || memory.some((block) => block <= 0)
+        ) {
             throw new Error('Memory must be an array of positive integers.');
         }
         this.#memory = memory.map((block) => ({
